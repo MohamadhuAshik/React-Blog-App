@@ -1,18 +1,34 @@
 import React, { useContext, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import DataContext from "./context/DataContext";
+import { ApiServices } from "./api/api_services";
 
 const EditPosts = () => {
-  const { posts, editTitle, editBody, setEditTitle, setEditBody, handleEdit } =
+  const { editTitle, editBody, setEditTitle, setEditBody, handleEdit } =
     useContext(DataContext);
   const { id } = useParams();
-  const post = posts.find((post) => post.id.toString() === id);
+  const getData = (id) => {
+    ApiServices.postGetById(id).then((res) => {
+      console.log(res)
+      if (res.response_code === 200) {
+        setEditTitle(res.posts.title);
+        setEditBody(res.posts.body);
+      }
+    })
+  }
   useEffect(() => {
-    if (post) {
-      setEditTitle(post.title);
-      setEditBody(post.body);
-    }
-  }, [post, setEditBody, setEditTitle]);
+    getData(id)
+  }, [])
+
+  // const post = posts.find((post) => post.id.toString() === id);
+  // useEffect(() => {
+  //   if (post) {
+  //     setEditTitle(post.title);
+  //     setEditBody(post.body);
+  //   }
+  // }, [post, setEditBody, setEditTitle]);
+
+
   return (
     <main className="NewPost">
       {editTitle && (
@@ -34,7 +50,7 @@ const EditPosts = () => {
               value={editBody}
               onChange={(e) => setEditBody(e.target.value)}
             />
-            <button type="submit" onClick={() => handleEdit(post.id)}>
+            <button type="submit" onClick={() => handleEdit(id)}>
               Submit
             </button>
           </form>

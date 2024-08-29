@@ -1,113 +1,114 @@
-import { createContext,useEffect,useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import useWindowSize from "../Hooks/useWindowSize";
-import useAxiosFetch from "../Hooks/useAxiosFetch";
-import { format } from "date-fns";
-import api from "../api/posts";
+// import useAxiosFetch from "../Hooks/useAxiosFetch";
+// import { format } from "date-fns";
+import { ApiServices } from "../api/api_services";
 import { useNavigate } from "react-router-dom";
+// import axios from "axios";
 
 const DataContext = createContext({})
 
-export const DataProvider = ({children})=>{
-    const [posts, setPosts] = useState([]);
-    const [search, setSearch] = useState("");
-    const [searchResults, setSearchResults] = useState([]);
-    const [postTitle, setPostTitle] = useState("");
-    const [postBody, setPostBody] = useState("");
-    const [editTitle, setEditTitle] = useState("");
-    const [editBody, setEditBody] = useState("");
-    const navigate = useNavigate();
-    const { width, height } = useWindowSize();
-    const { data, fetchError, isLoading } = useAxiosFetch(
-      "http://localhost:3500/posts"
+export const DataProvider = ({ children }) => {
+  const [posts, setPosts] = useState([]);
+  const [search, setSearch] = useState("");
+  const [searchResults, setSearchResults] = useState([]);
+  const [postTitle, setPostTitle] = useState("");
+  const [postBody, setPostBody] = useState("");
+  const [editTitle, setEditTitle] = useState("");
+  const [editBody, setEditBody] = useState("");
+  const navigate = useNavigate();
+  const { width, height } = useWindowSize();
+  const [isLogin, setIsLogin] = useState(false)
+
+  /* const { data, fetchError, isLoading } = useAxiosFetch(
+    "http://localhost:6969/posts/get"
+
+  ); */
+
+  const getPostData = () => {
+    ApiServices.getPost().then((res) => {
+      console.log(res)
+      if (res.response_code === 200) {
+        setPosts(res.posts)
+      }
+    })
+  }
+  useEffect(() => {
+    getPostData()
+  }, []);
+
+  let token;
+  if (typeof window !== "undefined") {
+    token = localStorage.getItem("token")
+  }
+  console.log("token", token)
+  useEffect(() => {
+    if (token) {
+      setIsLogin(true)
+    } else {
+      setIsLogin(false)
+    }
+  }, [token])
+  console.log("isLogin", isLogin)
+
+  useEffect(() => {
+    const filterResults = posts.filter(
+      (post) =>
+        post.body.toLowerCase().includes(search.toLowerCase()) ||
+        post.title.toLowerCase().includes(search.toLowerCase())
     );
-  
-    
-    useEffect(() => {
-      setPosts(data);
-    }, [data]);
-  
+    setSearchResults(filterResults.reverse());
+  }, [posts, search]);
 
-    useEffect(() => {
-      const filterResults = posts.filter(
-        (post) =>
-          post.body.toLowerCase().includes(search.toLowerCase()) ||
-          post.title.toLowerCase().includes(search.toLowerCase())
-      );
-      setSearchResults(filterResults.reverse());
-    }, [posts, search]);
-  
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      const id = posts.length ? posts[posts.length - 1].id + 1 : 1;
-      const datetime = format(new Date(), `MMM dd, yyyy pp`);
-      const newPost = { id, title: postTitle, datetime, body: postBody };
-      try {
-        const response = await api.post("/posts", newPost);
-        const allPosts = [...posts, response.data];
-        setPosts(allPosts);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const newPost = { title: postTitle, body: postBody };
+    ApiServices.createPost(newPost).then((res) => {
+      console.log(res)
+      if (res.response_code === 200) {
         setPostTitle("");
         setPostBody("");
         navigate("/");
-      } catch (err) {
-        if (err.response) {
-          console.log(err.response.data);
-          console.log(err.response.status);
-          console.log(err.response.headers);
-        } else {
-          console.log(`Error:${err.stack}`);
-        }
+        getPostData()
       }
-    };
-  
+    })
 
-    const handleDelete = async (id) => {
-      try {
-        await api.delete(`/posts/${id}`);
-        const postsLists = posts.filter((post) => post.id !== id);
-        setPosts(postsLists);
+  };
+
+
+  const handleDelete = async (id) => {
+
+    ApiServices.deletePost(id).then((res) => {
+      if (res.response_code === 200) {
         navigate("/");
-      } catch (err) {
-        if (err.response) {
-          console.log(err.response.data);
-          console.log(err.response.status);
-          console.log(err.response.headers);
-        } else {
-          console.log(`Error:${err.stack}`);
-        }
+        getPostData()
       }
-    };
+    })
+
+  };
 
 
-    const handleEdit = async (id) => {
-      const datetime = format(new Date(), `MMM dd, yyyy pp`);
-      const updatePost = { id, title: editTitle, datetime, body: editBody };
-      try {
-        const response = await api.put(`/posts/${id}`, updatePost);
-        setPosts(
-          posts.map((item) => (item.id === id ? { ...response.data } : item))
-        );
+  const handleEdit = async (id) => {
+    const updatePost = { title: editTitle, body: editBody };
+    ApiServices.editPost(id, updatePost).then((res) => {
+      if (res.response_code === 200) {
         setEditTitle("");
         setEditBody("");
         navigate("/");
-      } catch (err) {
-        if (err.response) {
-          console.log(err.response.data);
-          console.log(err.response.status);
-          console.log(err.response.headers);
-        } else {
-          console.log(`Error:${err.stack}`);
-        }
+        getPostData()
       }
-    };
 
-  return(
-   <DataContext.Provider value={{
-    width,search,setSearch,searchResults,fetchError,isLoading,handleSubmit, postTitle, setPostTitle, postBody, setPostBody,posts, editTitle, editBody, setEditTitle, setEditBody, handleEdit,handleDelete,height
+    })
 
-   }}>
-    {children}
-   </DataContext.Provider>
+  };
+
+  return (
+    <DataContext.Provider value={{
+      isLogin, setIsLogin, width, search, setSearch, searchResults,/*  fetchError, *//*  isLoading, */ handleSubmit, postTitle, setPostTitle, postBody, setPostBody, posts, editTitle, editBody, setEditTitle, setEditBody, handleEdit, handleDelete, height
+    }}>
+      {children}
+    </DataContext.Provider>
   )
 }
 export default DataContext

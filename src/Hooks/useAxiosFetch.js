@@ -9,6 +9,7 @@ const useAxiosFetch = (dataURL) => {
   useEffect(() => {
     let isMounted = true;
     const source = axios.CancelToken.source();
+    console.log("source", source)
     const fetchData = async (URL) => {
       setIsLoading(true);
       try {

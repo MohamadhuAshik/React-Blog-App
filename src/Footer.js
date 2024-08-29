@@ -7,7 +7,7 @@ const Footer = () => {
   return (
     <footer className="Footer">
       <h1>CopyRights &copy; {today.getFullYear()} </h1>
-      <p>Height:{height}</p>
+      {/* <p>Height:{height}</p> */}
     </footer>
   );
 };

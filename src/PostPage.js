@@ -1,11 +1,24 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import DataContext from "./context/DataContext";
+import { ApiServices } from "./api/api_services";
 
 const PostPage = () => {
-  const { posts, handleDelete }=useContext(DataContext)
+  const { handleDelete } = useContext(DataContext)
+  const [post, setPost] = useState({})
   const { id } = useParams();
-  const post = posts.find((post) => post.id.toString() === id);
+  const getData = (id) => {
+    ApiServices.postGetById(id).then((res) => {
+      console.log(res)
+      if (res.response_code === 200) {
+        setPost(res.posts)
+      }
+    })
+  }
+  useEffect(() => {
+    getData(id)
+  }, [])
+
   return (
     <main className="PostPage">
       <article className="post">
@@ -14,10 +27,10 @@ const PostPage = () => {
             <h2>{post.title}</h2>
             <p className="postDate">{post.datetime}</p>
             <p className="postBody">{post.body}</p>
-            <Link to={`/edit/${post.id}`}><button className="editButton">Edit Post</button></Link>
+            <Link to={`/edit/${post._id}`}><button className="editButton">Edit Post</button></Link>
             <button
               className="deleteButton"
-              onClick={() => handleDelete(post.id)}
+              onClick={() => handleDelete(post._id)}
             >
               DeletePost
             </button>
