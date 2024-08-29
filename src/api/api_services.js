@@ -31,7 +31,7 @@ const Login = async (data) => {
     );
     return response.data;
   } catch (error) {
-    return error;
+    throw error.response;
   }
 }
 

@@ -1,19 +1,21 @@
 import React, { useContext } from "react";
 import Feed from "./Feed";
 import DataContext from "./context/DataContext";
+import Loder from "./component/Loder";
+
 
 const Home = () => {
-  const {searchResults,fetchError,isLoading}=useContext(DataContext)
+  const { searchResults, isLoading } = useContext(DataContext)
   return (
     <main className="Home">
-      {isLoading && <p className="statusMsg">Loding Posts...</p>}
-      {!isLoading && fetchError && (
+      {isLoading && <div style={{ height: "100%" }} className="d-flex  align-items-center justify-content-center"><Loder /></div>}
+      {/*  {!isLoading && fetchError && (
         <p className="statusMsg" style={{ color: "red" }}>
           {fetchError}
         </p>
-      )}
+      )} */}
       {!isLoading &&
-        !fetchError &&
+        /*     !fetchError && */
         (searchResults.length ? (
           <Feed posts={searchResults} />
         ) : (

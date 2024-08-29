@@ -19,6 +19,7 @@ export const DataProvider = ({ children }) => {
   const navigate = useNavigate();
   const { width, height } = useWindowSize();
   const [isLogin, setIsLogin] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
 
   /* const { data, fetchError, isLoading } = useAxiosFetch(
     "http://localhost:6969/posts/get"
@@ -26,11 +27,13 @@ export const DataProvider = ({ children }) => {
   ); */
 
   const getPostData = () => {
+    setIsLoading(true)
     ApiServices.getPost().then((res) => {
       console.log(res)
       if (res.response_code === 200) {
         setPosts(res.posts)
       }
+      setIsLoading(false)
     })
   }
   useEffect(() => {
@@ -105,7 +108,7 @@ export const DataProvider = ({ children }) => {
 
   return (
     <DataContext.Provider value={{
-      isLogin, setIsLogin, width, search, setSearch, searchResults,/*  fetchError, *//*  isLoading, */ handleSubmit, postTitle, setPostTitle, postBody, setPostBody, posts, editTitle, editBody, setEditTitle, setEditBody, handleEdit, handleDelete, height
+      isLogin, setIsLogin, width, search, setSearch, searchResults,/*  fetchError, */  isLoading, handleSubmit, postTitle, setPostTitle, postBody, setPostBody, posts, editTitle, editBody, setEditTitle, setEditBody, handleEdit, handleDelete, height
     }}>
       {children}
     </DataContext.Provider>
