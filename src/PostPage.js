@@ -25,7 +25,7 @@ const PostPage = () => {
         {post && (
           <>
             <h2>{post.title}</h2>
-            <p className="postDate">{post.datetime}</p>
+            <p className="postDate">{new Date(post.datetime).toString().slice(0, 25)}</p>
             <p className="postBody">{post.body}</p>
             <Link to={`/edit/${post._id}`}><button className="editButton">Edit Post</button></Link>
             <button

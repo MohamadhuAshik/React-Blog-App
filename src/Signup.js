@@ -51,11 +51,18 @@ const Signup = () => {
     };
 
     const [open, setOpen] = useState(false);
+    const [errorOpen, setErrorOpen] = useState(false)
+    const [errMsg, setErrorMsg] = useState("")
+
 
     const handleClose = () => {
         setOpen(false);
         navigate("/")
     };
+
+    const handleErrorClose = () => {
+        setErrorOpen(false)
+    }
 
     const postData = async (UserName, mailId, password) => {
         setUserNameError(false)
@@ -83,6 +90,11 @@ const Signup = () => {
             console.log(res)
             if (res.response_code === 200) {
                 setOpen(true)
+            }
+        }).catch((err) => {
+            if (err) {
+                setErrorOpen(true)
+                setErrorMsg(err.data.errors)
             }
         });
     };
@@ -184,6 +196,30 @@ const Signup = () => {
                 </DialogContent>
                 <DialogActions className='d-flex justify-content-center'>
                     <Button variant="contained" size="large" onClick={handleClose} autoFocus>
+                        OK
+                    </Button>
+                </DialogActions>
+            </Dialog>
+
+
+            <Dialog
+                maxWidth="xs"
+                fullWidth
+                open={errorOpen}
+                onClose={handleErrorClose}
+                aria-labelledby="alert-dialog-title"
+                aria-describedby="alert-dialog-description"
+            >
+                <DialogTitle className='d-flex justify-content-center' id="alert-dialog-title">
+                    {/* <CheckCircleTwoToneIcon style={{ fontSize: "80px", color: 'primary' }} /> */}
+                </DialogTitle>
+                <DialogContent className='d-flex justify-content-center'>
+                    <DialogContentText fontSize={20} id="alert-dialog-description">
+                        {errMsg}
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions className='d-flex justify-content-center'>
+                    <Button variant="contained" size="large" onClick={handleErrorClose} autoFocus>
                         OK
                     </Button>
                 </DialogActions>

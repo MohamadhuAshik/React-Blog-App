@@ -141,7 +141,7 @@ const Login = () => {
                 </DialogTitle>
                 <DialogContent className='d-flex justify-content-center'>
                     <DialogContentText fontSize={20} id="alert-dialog-description">
-                        LOGIN SUCCESS
+                        Login Success
                     </DialogContentText>
                 </DialogContent>
                 <DialogActions className='d-flex justify-content-center'>

@@ -19,7 +19,7 @@ const Home = () => {
         (searchResults.length ? (
           <Feed posts={searchResults} />
         ) : (
-          <p className="statusMsg">No Posts To Display</p>
+          <p className="statusMsg d-flex justify-content-center align-items-center">No Posts To Display</p>
         ))}
     </main>
   );

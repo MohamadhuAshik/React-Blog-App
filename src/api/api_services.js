@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const baseURL = process.env.REACT_APP_BASE_URL
+const baseURL = process.env.REACT_APP_BASE_URL /*  ||   "http://localhost:6969" */
 console.log("baseURL", baseURL)
 let token = localStorage.getItem("token")
 
@@ -20,7 +20,7 @@ const signUp = async (data) => {
     );
     return response.data;
   } catch (error) {
-    return error;
+    throw error.response;
   }
 }
 
