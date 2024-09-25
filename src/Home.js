@@ -4,10 +4,14 @@ import DataContext from "./context/DataContext";
 import Loder from "./component/Loder";
 
 
+
+
 const Home = () => {
   const { searchResults, isLoading } = useContext(DataContext)
+
   return (
     <main className="Home">
+
       {isLoading && <div style={{ height: "100%" }} className="d-flex  align-items-center justify-content-center"><Loder /></div>}
       {/*  {!isLoading && fetchError && (
         <p className="statusMsg" style={{ color: "red" }}>

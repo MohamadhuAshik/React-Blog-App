@@ -15,6 +15,7 @@ import { useEffect, useState } from "react";
 
 function App() {
   const [isLogin, setIsLogin] = useState(false)
+
   const [isname, setIsName] = useState("")
   let token;
   let name;
@@ -23,7 +24,9 @@ function App() {
     name = localStorage.getItem("name")
   }
   console.log("token", token)
+
   useEffect(() => {
+
     if (token) {
       setIsLogin(true)
       setIsName(name)
@@ -31,7 +34,9 @@ function App() {
       setIsLogin(false)
       setIsName("")
     }
+
   }, [token])
+
   console.log("isLogin", isLogin)
   return (
     <div className="App">

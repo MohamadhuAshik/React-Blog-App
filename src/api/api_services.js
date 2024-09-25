@@ -1,7 +1,7 @@
 import axios from "axios";
 
 
-const baseURL = process.env.REACT_APP_BASE_URL /*  ||   "http://localhost:6969" */
+const baseURL = process.env.REACT_APP_BASE_URL  /*   ||     "http://localhost:6969" */
 console.log("baseURL", baseURL)
 let token = localStorage.getItem("token")
 

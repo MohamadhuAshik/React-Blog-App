@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
 import OutlinedInput from '@mui/material/OutlinedInput';
@@ -21,6 +21,8 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import Loder from './component/Loder';
+import { requestFcmToken } from "./utils/fireBaseUtils";
+
 
 const Login = () => {
     const { setIsLogin } =
@@ -28,6 +30,19 @@ const Login = () => {
     const [showPassword, setShowPassword] = React.useState(false);
     const [mailId, setMailId] = useState("")
     const [password, setPassword] = useState("")
+    const [fcmToken, setFcmToken] = useState("")
+    const fetchFcmToken = async () => {
+        try {
+            const getfcmToken = await requestFcmToken()
+            setFcmToken(getfcmToken)
+            console.log("fcmToken", getfcmToken)
+        } catch (err) {
+            console.log("Error getting FCM Token:", err)
+        }
+    }
+    useEffect(() => {
+        fetchFcmToken()
+    }, [])
     const navigate = useNavigate()
 
     const handleClickShowPassword = () => setShowPassword((show) => !show);
@@ -55,10 +70,11 @@ const Login = () => {
         setErrorOpen(false)
     }
 
-    const LoginUser = async (mailId, password) => {
+    const LoginUser = async (mailId, password, fcmToken) => {
         const data = {
             mailId: mailId,
-            password: password
+            password: password,
+            fcmToken: fcmToken
         }
         ApiServices.Login(data).then((res) => {
             console.log(res)
@@ -119,12 +135,13 @@ const Login = () => {
                             label="Password"
                         />
                     </FormControl>
-                    <Button className='w-100 rounded-2' onClick={() => LoginUser(mailId, password)} variant="contained" size="large">
+                    <Button className='w-100 rounded-2' onClick={() => LoginUser(mailId, password, fcmToken)} variant="contained" size="large">
                         Login
                     </Button>
                     <Typography className='text-center mt-2'>
                         Don't have account? <span style={{ cursor: "pointer" }} onClick={() => navigate("/signup")}>Create account</span>
                     </Typography>
+
                 </CardContent>
             </Card>
 
